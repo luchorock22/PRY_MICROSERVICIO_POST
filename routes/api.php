@@ -17,4 +17,3 @@ Route::get('/user', function (Request $request) {
     Route::post('/posts', [PostController::class, 'store']);     // Crear post
     Route::put('/posts/{id}', [PostController::class, 'update']); // Actualizar post
     Route::delete('/posts/{id}', [PostController::class, 'destroy']); // Eliminar post
-});
