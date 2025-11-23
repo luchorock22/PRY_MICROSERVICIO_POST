@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-// Ruta de prueba del usuario (opcional)
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 
