@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'auth' => [
+        'url' => env('AUTH_SERVICE_URL', 'http://localhost:8001'),
+        'timeout' => env('AUTH_SERVICE_TIMEOUT', 5),
+    ],
+
 ];

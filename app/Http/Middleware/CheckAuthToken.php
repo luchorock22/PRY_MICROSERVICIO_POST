@@ -16,19 +16,37 @@ class CheckAuthToken
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $toke = $request ->bearerToken();
-        if (!$toke ) {
-            return response()->json(['message' => 'Unauthorized, token invalido'], 401);
+        // Obtener el token del header Authorization: Bearer {token}
+        $token = $request->bearerToken();
+        
+        if (!$token) {
+            return response()->json(['message' => 'Unauthorized, token inválido'], 401);
         }
-        //llamado apirest al microservicio auth para validar token
-        $response = Http::withToken($toke)->get('http://192.168.1.18:8000/api/validate-token');
-        if ($response->failed()) {
-            return response()->json(['message' => 'Unauthorized, token no valido'], 401);
+
+        try {
+            // Obtener la URL del microservicio de autenticación desde .env
+            $authServiceUrl = config('services.auth.url') ?? env('AUTH_SERVICE_URL', 'http://localhost:8001');
+            
+            // Realizar llamada HTTP al microservicio de autenticación para validar el token
+            $response = Http::withToken($token)
+                ->timeout(5)  // Agregar timeout de 5 segundos
+                ->get($authServiceUrl . '/api/validate-token');
+
+            if ($response->failed()) {
+                return response()->json(['message' => 'Unauthorized, token no válido'], 401);
+            }
+
+            // Guardar datos del usuario en los atributos de la solicitud
+            $request->attributes->add([
+                'auth_user' => $response->json('user')
+            ]);
+
+            return $next($request);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al validar el token',
+                'error' => $e->getMessage()
+            ], 401);
         }
-        //guardar datos del usuario en la solicitud
-        $request->attributes->add([
-            'auth_user' => $response->json('user')
-        ]);
-        return $next($request);
     }
 }

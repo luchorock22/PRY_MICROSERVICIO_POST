@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Middleware\CheckAuthToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\CheckAuthToken;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,10 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
-      $middleware->alias(['auth.micro', CheckAuthToken::class]);
-        
+    ->withMiddleware(function (Middleware $middleware) {
+        // ============================================
+        // REGISTRAR MIDDLEWARE PERSONALIZADO
+        // ============================================
+        $middleware->alias([
+            'auth.micro' => CheckAuthToken::class,
+        ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
+    ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
