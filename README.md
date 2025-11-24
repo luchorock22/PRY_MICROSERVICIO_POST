@@ -1,95 +1,72 @@
-# PRY_MICROSERVICIO_POST
+# 📘 **README – Microservicio de Autenticación + Microservicio de Posts (CRUD)**  
+### Proyecto para evaluación con Laravel Sanctum y comunicación entre microservicios
 
-Microservicio Laravel para gestión de posts. API backend que usa PostgreSQL y Vite para el frontend de desarrollo.
+---
 
-## Requisitos
-- PHP (compatible con la versión de Laravel del proyecto)
-- Composer
-- Node.js & npm
-- PostgreSQL (o Docker)
-- Git (opcional)
+# 📌 **1. Descripción general del proyecto**
 
-## Variables importantes (.env)
-Asegúrate de configurar estas variables en .env:
-- APP_URL=http://localhost:8000
-- DB_CONNECTION=pgsql
-- DB_HOST=127.0.0.1
-- DB_PORT=5432
-- DB_DATABASE=posts_db
-- DB_USERNAME=postgres
-- DB_PASSWORD=tu_password
-- AUTH_SERVICE_URL=http://localhost:8001
-- VITE_API_BASE_URL=http://localhost:8000
+Este proyecto está compuesto por **dos microservicios independientes**:
 
-## Instalar dependencias (Windows / PowerShell)
-1. Abrir PowerShell en la carpeta del proyecto:
-   cd 'C:\Users\stali\Desktop\PRY_MICROSERVICIO_POST\PRY_MICROSERVICIO_POST'
+---
 
-2. PHP / Composer:
-   composer install
-   php artisan key:generate
-   php artisan config:clear
-   php artisan cache:clear
+## 🟦 **Microservicio 1: Autenticación (Laravel Sanctum)**  
+- Maneja el **registro**, **login**, **generación de tokens**, y **validación de usuarios**.  
+- Funciona con **Laravel Sanctum**.  
+- Base de datos: **MySQL (XAMPP)**  
+- Puerto por defecto: **8000**
 
-3. Node / Vite:
-   npm install
-   npm run dev   # dev server Vite -> http://localhost:5173
-   # npm run build  (producción)
+Ejecutar:
+php artisan serve --port=8000 en el servidor de autenticación
 
-## Base de datos
-Opción A — Docker (rápido):
-```powershell
-docker run --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=Fioresam1417 -e POSTGRES_DB=posts_db -p 5432:5432 -v pgdata:/var/lib/postgresql/data -d postgres:15
-```
+## 🟩 **Microservicio 2: Posts (CRUD)**  
+- Permite crear, listar, actualizar y eliminar posts.  
+- Funciona con un **Middleware personalizado (auth.micro)** para validar tokens desde el microservicio de autenticación.  
+- Base de datos: **PostgreSQL**  
+- Puerto utilizado: **8001**
 
-Opción B — PostgreSQL en Windows:
-- Instalar PostgreSQL y añadir psql al PATH.
-- Crear BD:
-  psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE posts_db;"
+Ejecutar:
+php artisan serve --port=8001 en el servidor del post.
 
-Después de crear la BD:
-php artisan migrate --seed
+# 📌 **3. Configuración de Bases de Datos**
 
-## Ejecutar la aplicación
-1. Levantar backend Laravel:
-   php artisan serve --host=127.0.0.1 --port=8000
+---
 
-2. Vite (si no está corriendo):
-   npm run dev
+## 🟦 Microservicio 1: Autenticación (MySQL)
 
-Accesos:
-- Backend: http://localhost:8000
-- Frontend dev (Vite): http://localhost:5173
+Crear base de datos:
 
-## Endpoints principales (ejemplo)
-- GET /api/posts
-- GET /api/posts/{id}
-- POST /api/posts
-- PUT/PATCH /api/posts/{id}
-- DELETE /api/posts/{id}
+db_users_auto ---- Nombre de la base de datos del servidor de autenticación
 
-Rutas protegidas usan middleware que valida token contra el microservicio de autenticación:
-- AUTH_SERVICE_URL + /api/validate-token
-  - Ejemplo curl (header Bearer):
-    curl -H "Authorization: Bearer <TOKEN>" http://localhost:8001/api/validate-token
 
-## Pruebas
-- php artisan test
-- vendor/bin/phpunit
+## Editar `.env`:
 
-## Logs y debugging
-- Logs: storage/logs/laravel.log
-- Ver salida en tiempo real (PowerShell):
-  Get-Content .\storage\logs\laravel.log -Wait -Tail 50
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=db_users_auto
+DB_USERNAME=root
+DB_PASSWORD=
 
-## Problemas comunes
-- "node not recognized": instalar Node.js y reiniciar terminal.
-- "psql not recognized": instalar PostgreSQL o usar Docker.
-- Línea suelta en .env (p. ej. `hello@example.com`): eliminar o mover dentro de la clave correspondiente.
+## Ejecutar migraciones:
 
-## Notas
-- Verificar que AUTH_SERVICE_URL apunte al servicio de autenticación activo.
-- Ejecutar `php artisan storage:link` si necesita servir archivos desde storage.
+php artisan migrate
 
-## Licencia
-Sin licencia especificada.
+🟩 Microservicio 2: Posts (PostgreSQL)
+Crear base de datos:
+
+posts_db nombre de la base de datos 
+
+## Editar `.env`:
+
+```env
+
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=posts_db
+DB_USERNAME=postgres
+DB_PASSWORD=TU_CLAVE
+
+## Ejecutar migraciones:
+php artisan migrate
